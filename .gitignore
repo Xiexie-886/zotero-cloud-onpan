@@ -1,0 +1,18 @@
+# Generated artifacts and private local profiles / research
+/outputs/
+/work/
+/VALIDATION.json
+
+# Local dependencies and caches
+node_modules/
+__pycache__/
+*.py[cod]
+
+# Local credentials, preferences and diagnostics
+.env
+.env.*
+*.pem
+*.key
+*.log
+prefs.js
+user.js

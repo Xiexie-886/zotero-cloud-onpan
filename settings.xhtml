@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="cloud-on-demand-settings" title="网盘按需同步"
+        windowtype="cloud-on-demand:settings" width="880" height="800"
+        style="display:flex;overflow:hidden;">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" class="settings-root">
+<head>
+  <meta charset="utf-8"/>
+  <title>网盘按需同步</title>
+  <link rel="stylesheet" href="chrome://cloud-on-demand/content/settings.css"/>
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div class="wrap hero-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 16.5a4.25 4.25 0 0 1-.6-8.45 6 6 0 0 1 11.35 1.8A3.4 3.4 0 1 1 18 16.5h-2"/>
+              <path d="M11 12v8m-3-5 3-3 3 3"/>
+            </svg>
+          </span>
+          <div>
+            <div class="title-row"><h1>网盘按需同步</h1><span class="pill pill-beta">实验版</span></div>
+            <p class="hero-description">个人库附件存入网盘，条目和笔记仍由 Zotero 同步。</p>
+          </div>
+        </div>
+        <div class="save-tools">
+          <span id="config-state" role="status" data-state="initial">尚未保存配置</span>
+          <button id="save-top" type="button" class="button">保存配置</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="settings-scroll" class="settings-scroll" aria-label="同步设置">
+      <div class="wrap content">
+        <section class="card" aria-labelledby="account-heading">
+          <div class="section-heading">
+            <span class="step" aria-hidden="true">01</span>
+            <div><h2 id="account-heading">网盘与授权</h2><p>每次只使用一个网盘保存附件。</p></div>
+          </div>
+          <fieldset id="provider" class="providers">
+            <legend class="sr-only">附件同步网盘</legend>
+            <label class="provider-option provider-quark">
+              <input id="provider-quark" name="provider" type="radio" value="quark" checked="checked" aria-controls="quark-panel quark-directory"/>
+              <span class="provider-tile"><span class="provider-mark" aria-hidden="true">夸</span><span><strong>夸克网盘</strong><small>夸克 App 扫码</small></span><span class="radio-mark" aria-hidden="true"></span></span>
+            </label>
+            <label class="provider-option provider-baidu">
+              <input id="provider-baidu" name="provider" type="radio" value="baidu" aria-controls="baidu-panel baidu-directory"/>
+              <span class="provider-tile"><span class="provider-mark" aria-hidden="true">百</span><span><strong>百度网盘</strong><small>开放平台应用授权</small></span><span class="radio-mark" aria-hidden="true"></span></span>
+            </label>
+          </fieldset>
+
+          <div id="quark-panel" class="auth-panel">
+            <div class="auth-content">
+              <div><h3>夸克账号</h3><p class="hint">用夸克 App 扫码确认。登录不会开始同步。</p></div>
+              <div class="auth-actions">
+                <button id="quark-login" type="button" class="button button-accent" aria-controls="quark-qr-panel">夸克扫码登录</button>
+                <button id="quark-login-cancel" type="button" class="button button-quiet" hidden="hidden" disabled="disabled">取消扫码</button>
+              </div>
+            </div>
+            <p id="quark-auth-state" class="pill credential" role="status">尚未保存登录凭据</p>
+            <div id="quark-qr-panel" class="qr-panel" hidden="hidden">
+              <img id="quark-qr" alt="夸克官方登录二维码"/>
+              <div>
+                <h3 id="quark-qr-heading" tabindex="-1">请用夸克 App 扫码</h3>
+                <p>在手机上核对账号并确认登录。二维码过期后可重新生成。</p>
+                <p class="hint">插件只读取一条根目录信息来验证登录，不会上传、删除或同步附件。关闭窗口会取消等待。</p>
+              </div>
+            </div>
+            <details class="advanced"><summary>高级：手动填写 Cookie</summary>
+              <div class="advanced-content">
+                <p class="hint">仅在扫码不可用时，从夸克官方网页请求头复制完整 Cookie。请勿分享凭据。</p>
+                <label class="field" for="quark-cookie">Cookie <span>留空保留已保存值</span></label>
+                <input id="quark-cookie" class="secret" type="password" autocomplete="off" spellcheck="false" aria-describedby="quark-cookie-state"/>
+                <p id="quark-cookie-state" class="hint" role="status">尚未保存 Cookie。</p>
+                <p class="hint">手动填写后请保存配置。重新打开窗口时不会回显凭据。</p>
+              </div>
+            </details>
+          </div>
+
+          <div id="baidu-panel" class="auth-panel" hidden="hidden">
+            <h3>百度开放平台应用</h3>
+            <p class="hint">使用自己的 AppKey 和 SecretKey，授权过程只连接百度官方服务。</p>
+            <div class="field-grid">
+              <div><label class="field" for="baidu-client">AppKey / Client ID</label><input id="baidu-client" type="text" autocomplete="off" spellcheck="false"/></div>
+              <div><label class="field" for="baidu-secret">SecretKey <span>同一 AppKey 可留空复用</span></label><input id="baidu-secret" class="secret" type="password" autocomplete="off" spellcheck="false"/></div>
+            </div>
+            <div class="auth-content baidu-auth-content">
+              <p id="baidu-login-state" class="pill credential" role="status">尚未保存完整授权</p>
+              <div class="auth-actions">
+                <button id="baidu-login" type="button" class="button button-accent" aria-controls="baidu-qr-panel">百度扫码登录</button>
+                <button id="baidu-login-cancel" type="button" class="button button-quiet" hidden="hidden" disabled="disabled">取消扫码</button>
+              </div>
+            </div>
+            <div id="baidu-qr-panel" class="qr-panel" hidden="hidden">
+              <img id="baidu-qr" alt="百度官方设备码授权二维码"/>
+              <div>
+                <h3 id="baidu-qr-heading" tabindex="-1">请用百度或百度网盘 App 扫码</h3>
+                <p>在手机上核对应用和账号后确认授权。关闭窗口会取消等待。</p>
+                <p class="code-label">备用用户码 <strong id="baidu-user-code"></strong></p>
+              </div>
+            </div>
+            <details class="advanced"><summary>高级：授权码或已有 Token</summary>
+              <div class="advanced-content">
+                <button id="baidu-auth" type="button" class="button">打开百度官方授权页</button>
+                <label class="field" for="baidu-code">一次性授权码</label>
+                <div class="inline-fields"><input id="baidu-code" class="secret" type="password" autocomplete="off"/><button id="baidu-exchange" type="button" class="button">换取并保存 Token</button></div>
+                <div class="field-grid">
+                  <div><label class="field" for="baidu-access">Access Token <span>留空保留</span></label><input id="baidu-access" class="secret" type="password" autocomplete="off"/></div>
+                  <div><label class="field" for="baidu-refresh">Refresh Token <span>留空保留</span></label><input id="baidu-refresh" class="secret" type="password" autocomplete="off"/></div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <div class="setup-grid">
+          <section class="card" aria-labelledby="directory-heading">
+            <div class="section-heading">
+              <span class="step" aria-hidden="true">02</span>
+              <div><h2 id="directory-heading">同步目录</h2><p>为 Zotero 准备一个专用文件夹。</p></div>
+            </div>
+            <div id="quark-directory">
+              <label class="field" for="quark-folder">夸克专用目录</label>
+              <input id="quark-folder" type="text" placeholder="/文献/Zotero" autocomplete="off" spellcheck="false" aria-describedby="quark-folder-help quark-legacy"/>
+              <p id="quark-folder-help" class="hint field-help">填写网盘里已存在的完整目录路径，末尾不加 <code>/</code>。附件存放在该目录下的 <code>zotero</code> 子目录。</p>
+              <p id="quark-legacy" class="hint field-help" hidden="hidden">检测到旧版目录设置。留空继续使用原目录，或填写原目录的完整路径并保存。迁移设置不会搬动网盘文件。</p>
+            </div>
+            <div id="baidu-directory" hidden="hidden">
+              <label class="field" for="baidu-folder">百度专用目录</label>
+              <input id="baidu-folder" type="text" placeholder="/apps/应用名/Zotero" autocomplete="off" spellcheck="false" aria-describedby="baidu-folder-help"/>
+              <p id="baidu-folder-help" class="hint field-help">使用应用授权范围内的绝对路径，末尾不加 <code>/</code>。附件存放在该目录下的 <code>zotero</code> 子目录。</p>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="options-heading">
+            <div class="section-heading">
+              <span class="step" aria-hidden="true">03</span>
+              <div><h2 id="options-heading">附件选项</h2><p>只影响个人库的附件同步。</p></div>
+            </div>
+            <label class="field" for="max-mb">单个附件包上限</label>
+            <div class="number-field"><input id="max-mb" type="number" min="1" max="256" step="1" aria-describedby="max-mb-help"/><span>MiB</span></div>
+            <p id="max-mb-help" class="hint field-help">范围 1–256，默认 64。限制 Zotero 生成的 ZIP 包大小；实际内存占用会更高。</p>
+          </section>
+        </div>
+
+        <aside class="notice" aria-labelledby="notice-heading">
+          <span class="notice-mark" aria-hidden="true">!</span>
+          <div>
+            <h2 id="notice-heading">同步前请备份文献库</h2>
+            <p>这是实验版。首次使用请用测试文献库和专用网盘目录验证，不要直接同步唯一的文献库。</p>
+            <label class="check"><input type="checkbox" id="consent"/><span>我已备份文献库，并确认使用专用目录。</span></label>
+            <p>启用后，个人库附件通过此插件手动同步；停用插件可恢复 Zotero 原有附件同步方式。</p>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="taskbar">
+      <div class="wrap task-inner">
+        <div id="task-state" class="task-state" data-tone="info" role="status" aria-atomic="true">
+          <span class="task-indicator" aria-hidden="true"></span>
+          <div><strong id="task-title">任务状态</strong><p id="status">正在读取设置…</p></div>
+        </div>
+        <div class="task-actions">
+          <button id="save" type="button" class="button button-quiet">保存配置</button>
+          <button id="sync" type="button" class="button button-primary" aria-describedby="task-help">开始同步</button>
+        </div>
+        <p id="task-help" class="sr-only">操作会先保存配置。任务结束后自动关闭临时、本机专用的 WebDAV 接口。</p>
+      </div>
+    </footer>
+  </div>
+  <script src="chrome://cloud-on-demand/content/qrcode.js"></script>
+  <script src="chrome://cloud-on-demand/content/settings.js"></script>
+</body>
+</html>
+</window>

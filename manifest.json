@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "网盘按需同步 / Cloud On Demand",
+  "version": "0.2.2",
+  "description": "百度、夸克网盘的实验性按需 WebDAV 桥接。手动开始，同步结束关闭本地接口。",
+  "author": "Cloud On Demand contributors",
+  "applications": {
+    "zotero": {
+      "id": "cloud-on-demand@local.zotero",
+      "update_url": "https://127.0.0.1:9/cloud-on-demand/updates.json",
+      "strict_min_version": "10.0",
+      "strict_max_version": "10.*"
+    }
+  }
+}

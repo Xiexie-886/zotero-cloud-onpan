@@ -1,0 +1,12 @@
+{
+  "name": "zotero-cloud-on-demand",
+  "private": true,
+  "version": "0.2.2",
+  "description": "Experimental on-demand Baidu and Quark attachment sync for Zotero 10",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "test": "node tests/test-cloud.cjs && node tests/test-runtime.cjs && node tests/test-bootstrap.cjs && node tests/test-settings.cjs",
+    "build": "python scripts/build.py"
+  },
+  "engines": { "node": ">=18" }
+}
